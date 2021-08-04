@@ -27,10 +27,9 @@
     <title>dApp SpendCoin</title>
   </head>
   <body>
-    <!--<header>
+    <header>
       <div class='container'>
-        <img src="logo192.png" className="rounded float-start" alt="..."></img>
-        <h1>dApp SpendCoin.io</h1>
+        <img src="./assets/spendcoin.png" className="rounded float-start" alt="logo spendcoin">dApp SpendCoin.io</img>
       </div>
       <div id="user-profile">
         <button type="button" class="btn btn-light btn-lg login" style="background-color:#8248e4">
@@ -43,6 +42,7 @@
     </header>
 
     <div id="swap-interface">
+     
       <form id="swap-box">
         <div class="input-group top">
           <input
@@ -55,14 +55,16 @@
             required
           />
           <span class="input-group-text" id="eth-addon">
-            <img src="src/assets/eth.png" />&nbsp;ETH
+            <img id="eth" src="./assets/eth.png" />&nbsp;ETH
           </span>
           
         </div>
 
         <div id="arrow-box">
-        <span>Slipage tolerance:</span>
-        <span>maximum payed:</span>
+          <ul>
+            <li>Slipage tolerance:</li>
+            <li>maximum payed:</li>
+          </ul>
         </div>
 
         <div class="input-group bottom">
@@ -83,27 +85,11 @@
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-        Select Token
+        
+          <img id="usdc" src="./assets/usdc-logo.png" />&nbsp;USDC
       </button>
 
-      <ul class="dropdown-menu w-30">
-        <li>
-          <a class="dropdown-item"
-            ><img src="assets/images/comp.png" />&nbsp;&nbsp;COMP</a
-          >
-        </li>
-        <li>
-          <a class="dropdown-item"
-            ><img src="assets/images/link.png" />&nbsp;&nbsp;LINK</a
-          >
-        </li>
-        <li>
-          <a class="dropdown-item"
-            ><img src="assets/images/dai.png" />&nbsp;&nbsp;DAI</a
-          >
-        </li>
-      </ul>
-    </div>
+      
     <div id="rate-box">
       <span class="rate text">MAX PRICE: </span>
       <span class="rate value">
@@ -114,8 +100,14 @@
       BUY
     </button>
   </form>
-</div>!-->
-
+</div>
+<footer>
+  SpendCoinDApp make with ❤️ by
+  <a href="" rel="noreferrer" target="_blank">
+    &nbsp; Wild Team for Digital Pilote
+  </a>
+  © 2021
+</footer>
 
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>

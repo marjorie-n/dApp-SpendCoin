@@ -1,8 +1,10 @@
-import logo from "./assets/spendcoin.png";
+/*import logo from "./assets/spendcoin.png";*/
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import Web3 from "web3";
 import "./App.css";
+
+
 
 //Connect with web3
 class App extends Component {
@@ -46,31 +48,10 @@ class App extends Component {
    */
   render() {
     return (
-      <div className={"container"}>
-        <main>
-          <img src={logo} className="rounded float-start" alt="..."></img>
-          <h3>dApp SpendCoin.io</h3>
-
-          <div class="btn-toolbar">
-            <div id="user-profile">
-              <button type="button" className="btn btn-primary btn-lg login">
-                Polygon
-              </button>
-              <button type="button" className="btn btn-warning btn-lg login">
-                Connect Wallet
-              </button>
-            </div>
-          </div>
-        </main>
-        <footer className={".footer"}>
-          SpendCoinDApp make with ❤️ by
-          <a href="" rel="noreferrer" target="_blank">
-            &nbsp; Wild Team for Digital Pilote
-          </a>
-          © 2021
-        </footer>
-      </div>
-    );
+      <div className={"container"}></div>
+    
+      );
+    }
   }
-}
+
 export default App;
