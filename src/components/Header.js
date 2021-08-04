@@ -1,4 +1,6 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
+
+import chainsList from "../chains/chains.json"
 
 export default function Header(props) {
 
@@ -8,6 +10,7 @@ export default function Header(props) {
             <img src="./assets/spendcoin.png" className="rounded float-start" alt="logo spendcoin"/>dApp SpendCoin.io
           </div>
           <div id="user-profile">
+              {props.network.name}
             <button type="button" className="btn btn-light btn-lg login" style={{backgroundColor: "#8248e4"}}>
               Polygon
             </button>

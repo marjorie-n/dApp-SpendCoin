@@ -4,6 +4,9 @@ import "bootstrap/dist/css/bootstrap.css";
 import Web3 from "web3";
 import "./App.css";
 
+import chainsList from "./chains/chains.json"
+
+
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -14,6 +17,12 @@ function App() {
 
   const [web3] = useState(new Web3(Web3.givenProvider || "ws://localhost:8545"));
   const [isConnectedWeb3, setIsConnectedWeb3] = useState(false);
+  const [networkId, setNetworkId] = useState(null)
+  const [network, setNetwork] = useState({})
+
+  const [isRinkeby, setIsRinkeby] = useState(false)
+
+
 
   const [amountUSDC, setAmountUSDC] = useState(2)
 
@@ -23,6 +32,9 @@ function App() {
 
   const connectToWeb3 = useCallback(
     async () => {
+
+      let currentChainID = await web3.eth.net.getId()
+      setNetworkId(currentChainID)
       if(window.ethereum) {
         try {
           await window.ethereum.request({method: 'eth_requestAccounts'})
@@ -36,9 +48,38 @@ function App() {
     }
   )
 
+  const verifyNetwork = async () => {
+    let currentChainID = await web3.eth.getChainId()
+    setNetworkId(currentChainID)
+    for(let i=0; i < chainsList.length; i++){
+      if(currentChainID === chainsList[i].chainId)
+          setNetwork(chainsList[i])
+  }
+    console.log(currentChainID);
+
+    if (currentChainID == 4) {
+      setIsRinkeby(true)
+    } else {
+      setIsRinkeby(false)
+    }
+  }
+
+
+
+   /*
+    Connection au chargement de la page
+  */
   useEffect(async () => {
-    const displayAccConnect =  () => console.log("connect")
-    const displayChainChanged =  () => console.log("chainChanged")
+    // Connection
+    const displayAccConnect =  () => {
+      console.log("connect"); 
+      verifyNetwork()
+    }
+    // Changement de chaine
+    const displayChainChanged =  () => {
+      console.log("chainChanged"); 
+      verifyNetwork()
+    }
     const displayAccChanged =  () => {
       const getAccounts = async () => setAccounts(await web3.eth.getAccounts())
       const acc = getAccounts()
@@ -50,6 +91,8 @@ function App() {
     window.ethereum.on('connect', displayAccConnect)
     window.ethereum.on('chainChanged', displayChainChanged)
     window.ethereum.on('accountsChanged', displayAccChanged)
+
+    verifyNetwork()
 
     return () => {
       if (window.ethereum.removeListener) {
@@ -79,7 +122,7 @@ function App() {
     return (
       <div className={"container"}>
         
-        <Header handleClick={() => connectToWeb3()} />
+        <Header handleClick={() => connectToWeb3()} network={network} />
 
         <div id="swap-interface">
         
@@ -95,7 +138,7 @@ function App() {
                 required
               />
               <span className="input-group-text" id="eth-addon">
-                <img id="eth" src="./assets/eth.png" />&nbsp;ETH
+                <img id="eth" src="./assets/eth.png" />&nbsp; {network.nativeCurrency ? network.nativeCurrency.symbol : 'eth'}
               </span>
               
             </div>
