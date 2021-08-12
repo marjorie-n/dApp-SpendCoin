@@ -1,16 +1,15 @@
 /*import logo from "./assets/spendcoin.png";*/
-<<<<<<< HEAD
+ /*HEAD*/
 import React, { useState, useEffect, useCallback } from "react";
 import "bootstrap/dist/css/bootstrap.css";
-=======
 import React, {useState, useEffect, useCallback} from "react";
 // import "bootstrap/dist/css/bootstrap.css";
->>>>>>> d7de301649ba052d16e302ea7cc26028bd1f6456
+// d7de301649ba052d16e302ea7cc26028bd1f6456
 import Web3 from "web3";
 import "./App.css";
 import "./reset.css";
 
-<<<<<<< HEAD
+//HEAD
 import chainsList from "./chains/chains.json";
 
 import Header from "./components/Header";
@@ -100,7 +99,6 @@ function App() {
   }, []);
 
   // useEffect( async () => {
-=======
 //Json import
 import chainsList from "./chains/chains.json"
 import tokenList from "./tokensList/tokens.json"
@@ -282,7 +280,7 @@ useEffect(async () => {
 //     setAccount(accounts[0])
 //     const networkId = await web3.eth.net.getId();
 //   }
->>>>>>> d7de301649ba052d16e302ea7cc26028bd1f6456
+//d7de301649ba052d16e302ea7cc26028bd1f6456
 
 //   loadBlockchainData();
 // }, [])
@@ -290,7 +288,7 @@ useEffect(async () => {
  * Rend JSX
  */
 
-<<<<<<< HEAD
+//HEAD
   //   loadBlockchainData();
   // }, [])
   /**
@@ -363,7 +361,7 @@ useEffect(async () => {
           </button>
         </form>
       </div>
-=======
+
     return (
       <div className={"container"}>
         
@@ -404,7 +402,7 @@ useEffect(async () => {
                   </form>
               </div>
           </div>
->>>>>>> d7de301649ba052d16e302ea7cc26028bd1f6456
+//</div>d7de301649ba052d16e302ea7cc26028bd1f6456
 
       <Footer />
     </div>
