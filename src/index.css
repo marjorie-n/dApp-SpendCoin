@@ -150,22 +150,9 @@ footer {
   position: fixed;
   bottom: 0px;
   width: 100%;
-  color: #b7b7b7;
-  opacity: 0.5;
+  color: black;
   padding-bottom: 15px;
 }
-
-footer #creator {
-  float: left;
-  padding-left: 20px;
-}
-
-footer #username {
-  float: right;
-  padding-right: 20px;
-}
-
-
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

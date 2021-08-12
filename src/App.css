@@ -158,11 +158,11 @@ footer {
   padding: 0;
   line-height: normal;
   position: fixed;
-  bottom: 0px;
+  bottom: 8px;
   width: 100%;
-  color: #000000;
-  opacity: 0.5;
+  color: black;
   padding-bottom: 15px;
+  margin-left: 24%!important;
 }
 
 input::-webkit-outer-spin-button,
