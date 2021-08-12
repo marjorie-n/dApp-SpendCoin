@@ -39,7 +39,9 @@ function App() {
   const [initialPrice, setInitialPrice] = useState(10)
 
   // SWAP INFOS
+  const [addressWETH] = useState("0xd0A1E359811322d97991E03f863a0C30C2cF029C")
   const [tokenChose, setTokenChose] = useState(tokenList[0])
+  const [tokenAddress, setTokenAddress] = useState(tokenList[0].address)
   const [addressTokenOut] = useState("0x67BeF77Fef6D7bbF0fE14723E017c2fda1634Ef8") // WCS pour le contrat test v0.2
   const [amountInMax, setAmountInMax]= useState(0)
 
@@ -133,7 +135,7 @@ useEffect(async () => {
   }
 }, [])
 
-// Récupérer la balance lorque le compte ou le réseau change
+// Récupérer la balance & le amountInMax lorque le compte ou le réseau change
 useEffect (()=> {
   const getAccounts = async () => setAccounts(await web3.eth.getAccounts())
   const getBalance = async () => setBalance(web3.utils.fromWei(await web3.eth.getBalance(accounts[0])))
@@ -145,15 +147,49 @@ useEffect (()=> {
     setIsConnectedWeb3(true)
 }, [isConnectedWeb3, accounts, network, web3.eth, web3.utils])
 
-// Changer la balance lorque letoken choisi change
-useEffect(() => {
+// Changer la balance lorque le token choisi change
+useEffect( async () => {
   console.log('change balance')
-  console.log(tokenChose.name)
-}, [tokenChose])
+  console.log(tokenAddress)
+
+  // Change token
+  for(let i=0; i<tokenList.length; i++){
+    if(tokenAddress === tokenList[i].address){
+      console.log(tokenList[i].name)
+      setTokenChose(tokenList[i])
+    }
+  }
+
+  // Change Balance
+  if(tokenAddress){
+    try{
+      const tokenContract = new web3.eth.Contract(erc20ABI, tokenAddress)
+      const balance = await tokenContract.methods.balanceOf(accounts[0]).call()
+      console.log(balance)
+      setBalance(web3.utils.fromWei(balance))
+    
+    } catch(error) {
+      console.log(error)
+      console.log("cant resolve token balance")
+    }
+  } else {
+    if (accounts.length > 0) {
+      console.log('balance eth')
+      console.log(accounts[0])
+      setBalance(web3.utils.fromWei(await web3.eth.getBalance(accounts[0])))
+    }
+  }
+
+  // Change AmountInMax
+  getAmoutIn()
+
+}, [tokenAddress])
 
 
+
+// Liste des token dans le select
 const tokensList = tokenList.map((token, index) => {
-  return(<option key={index} value={token}>{token.name}</option>)
+  return(<option key={index} value={token.address}>{token.name}</option>)
 })
 
 // Avoir le montant In en fonction du token 
@@ -161,9 +197,17 @@ const getAmoutIn = async() => {
   console.log(tokenChose.address)
   console.log(addressTokenOut)
   console.log(initialPrice)
+  let addressTokenIn;
+
+  // Check if ETH or Token
+  if(tokenAddress)
+    addressTokenIn = tokenAddress
+  else
+    addressTokenIn = addressWETH
+  
   try{
     const swapContract = new web3.eth.Contract(swapContractABi, addressSwapContract)
-    const amountIn = await swapContract.methods.getAmountInMax(tokenChose.address, addressTokenOut, web3.utils.toWei(initialPrice.toString())).call()
+    const amountIn = await swapContract.methods.getAmountInMax(addressTokenIn, addressTokenOut, web3.utils.toWei(initialPrice.toString())).call()
     console.log(web3.utils.fromWei(amountIn))
     setAmountInMax(web3.utils.fromWei(amountIn))
   } catch(error) {
@@ -184,7 +228,7 @@ const handdleClickBuy = async () => {
       if(tokenChose.name === "Ether") {
         console.log("swap ETH")
         // Récupère le amountInMax à mettre en value
-        const amountIn = await swapContract.methods.getAmountInMax(tokenChose.address, addressTokenOut, web3.utils.toWei(initialPrice.toString())).call()
+        const amountIn = await swapContract.methods.getAmountInMax(addressWETH, addressTokenOut, web3.utils.toWei(initialPrice.toString())).call()
        
         swapContract.methods.swapETH(amountOut).send({from: accounts[0], value: amountIn})
         .on('sending', () => {
@@ -199,6 +243,18 @@ const handdleClickBuy = async () => {
 
       } else {
         console.log("swap token")
+
+        swapContract.methods.swapToken(tokenAddress, amountOut).send({from: accounts[0]})
+        .on('sending', () => {
+          console.log("Transaction send ! Please confirm the transaction on metamask")
+        })
+        .once('transactionHash', (hash) => {
+          console.log(hash)
+        })
+        .on('confirmation', () => {
+          console.log('Transaction has been confirmed')
+        })
+
       }
     } catch(error) {
       console.log(error)
@@ -277,7 +333,7 @@ const handdleClickBuy = async () => {
                       
                       <div class="group-top">
                           
-                          <select  name="listErc20" onChange={e=>{setTokenChose(e.target.value)}}>
+                          <select  name="listErc20" onChange={e=>{setTokenAddress(e.target.value)}}>
                             {tokensList}                          
                           </select>
                           <span class="group-text"> <img src="{tokenList.logoURI}" alt=""/> </span>
@@ -289,7 +345,7 @@ const handdleClickBuy = async () => {
                       
                       <p class="margin-bottom-p"><span class="italic">maximum payed :</span>&nbsp;&nbsp;<span class="bold sizeERC20">{amountInMax} {tokenChose.symbol}</span></p>
                       
-                      <h2>Max Price : {initialPrice}</h2>
+                      <h2>Max Price : {initialPrice} $</h2>
                       
                       <button onClick={() => handdleClickBuy()} class="btn-buy">BUY</button>
                   

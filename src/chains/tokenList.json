@@ -3,15 +3,8 @@
     "name": "Ether",
     "symbol": "ETH",
     "decimal": 18,
-    "address": "0xd0A1E359811322d97991E03f863a0C30C2cF029C",
+    "address": "",
     "infoURL": ""
-    },
-    {
-    "name": "EduToken",
-    "symbol": "WCS",
-    "decimal": 18,
-    "address": "0x67BeF77Fef6D7bbF0fE14723E017c2fda1634Ef8",
-    "infoURL": "https://kovan.etherscan.io/address/0x67BeF77Fef6D7bbF0fE14723E017c2fda1634Ef8"
     },
     {
     "name": "En Y test",
