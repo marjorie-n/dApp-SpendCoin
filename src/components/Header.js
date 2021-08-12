@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 
-import chainsList from "../chains/chains.json"
 
 export default function Header(props) {
 
