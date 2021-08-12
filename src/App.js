@@ -1,5 +1,5 @@
 /*import logo from "./assets/spendcoin.png";*/
-import React, {useState, useEffect, useCallback} from "react";
+import React, {useState, useEffect} from "react";
 // import "bootstrap/dist/css/bootstrap.css";
 import Web3 from "web3";
 import "./App.css";
@@ -35,17 +35,14 @@ function App() {
   const [addressSwapContract] = useState("0xDfD93b6ABe3d759F2D046aE1F4Bf40C25aa36258")
   // const [tokenId, setTokenId] = useState("")
 
+  //SET GENERAL
+  const [initialPrice, setInitialPrice] = useState(10)
+
+  // SWAP INFOS
   const [tokenChose, setTokenChose] = useState(tokenList[0])
-
   const [addressTokenOut] = useState("0x67BeF77Fef6D7bbF0fE14723E017c2fda1634Ef8") // WCS pour le contrat test v0.2
-
   const [amountInMax, setAmountInMax]= useState(0)
 
-  //SET GENERAL
-  const [initialPrice, setInitialPrice] = useState(500)
-
-  //SEND ETH
-  // const [weiToSend, setWeiToSend] = useState(0)
 
   //SEND ERC20
   // const [balanceOf, setBalanceOf] = useState(0)
@@ -56,10 +53,10 @@ function App() {
   // const [tokenToSend, setTokenToSend] = useState(0)
   // const [symbol, setSymbol] = useState("")
   // const [amountUSDC, setAmountUSDC] = useState(2)
-  const [nameToken, setNameToken] = useState("")
+  // const [nameToken, setNameToken] = useState("")
   // const [addressER20, setAddressERC20] = useState("")
 
-  const [priceCalculated, setPriceCalculated] = useState(0)
+  //const [priceCalculated, setPriceCalculated] = useState(0)
 
   const connectToWeb3 =
   async () => {
@@ -90,7 +87,7 @@ const verifyNetwork = async () => {
   }
     console.log(currentChainID);
 
-  if (currentChainID == 42) {
+  if (currentChainID === 42) {
     setIsKovan(true)
     getAmoutIn()
   } else {
@@ -140,13 +137,13 @@ useEffect(async () => {
 useEffect (()=> {
   const getAccounts = async () => setAccounts(await web3.eth.getAccounts())
   const getBalance = async () => setBalance(web3.utils.fromWei(await web3.eth.getBalance(accounts[0])))
-  if (accounts.length == 0) getAccounts()
+  if (accounts.length === 0) getAccounts()
   if (accounts.length > 0) getBalance()
-  if (accounts.length == 0)
+  if (accounts.length === 0)
     setIsConnectedWeb3(false)
   else
     setIsConnectedWeb3(true)
-}, [isConnectedWeb3, accounts, network])
+}, [isConnectedWeb3, accounts, network, web3.eth, web3.utils])
 
 // Changer la balance lorque letoken choisi change
 useEffect(() => {
@@ -159,26 +156,58 @@ const tokensList = tokenList.map((token, index) => {
   return(<option key={index} value={token}>{token.name}</option>)
 })
 
-const handdleClickBuy = () => {
-  console.log("buy")
-  getAmoutIn()
+// Avoir le montant In en fonction du token 
+const getAmoutIn = async() => {
+  console.log(tokenChose.address)
+  console.log(addressTokenOut)
+  console.log(initialPrice)
+  try{
+    const swapContract = new web3.eth.Contract(swapContractABi, addressSwapContract)
+    const amountIn = await swapContract.methods.getAmountInMax(tokenChose.address, addressTokenOut, web3.utils.toWei(initialPrice.toString())).call()
+    console.log(web3.utils.fromWei(amountIn))
+    setAmountInMax(web3.utils.fromWei(amountIn))
+  } catch(error) {
+    console.log(error)
+    console.log("Cant resolve amount in")
+  }
 }
 
-  const getAmoutIn = async() => {
-    console.log(tokenChose.address)
-    console.log(addressTokenOut)
-    console.log(initialPrice)
+// Clic sur le bouton buy pour swap les token
+const handdleClickBuy = async () => {
+  // Must be on Kovan
+  if(isKovan) {
+    getAmoutIn()
+    const amountOut = web3.utils.toWei(initialPrice.toString())
     try{
       const swapContract = new web3.eth.Contract(swapContractABi, addressSwapContract)
-      const amountIn = await swapContract.methods.getAmountInMax(tokenChose.address, addressTokenOut, web3.utils.toWei(initialPrice.toString())).call()
-      console.log(web3.utils.fromWei(amountIn))
-      setAmountInMax(web3.utils.fromWei(amountIn))
+      // Check tokenIn
+      if(tokenChose.name === "Ether") {
+        console.log("swap ETH")
+        // Récupère le amountInMax à mettre en value
+        const amountIn = await swapContract.methods.getAmountInMax(tokenChose.address, addressTokenOut, web3.utils.toWei(initialPrice.toString())).call()
+       
+        swapContract.methods.swapETH(amountOut).send({from: accounts[0], value: amountIn})
+        .on('sending', () => {
+          console.log("Transaction send ! Please confirm the transaction on metamask")
+        })
+        .once('transactionHash', (hash) => {
+          console.log(hash)
+        })
+        .on('confirmation', () => {
+          console.log('Transaction has been confirmed')
+        })
+
+      } else {
+        console.log("swap token")
+      }
     } catch(error) {
       console.log(error)
-      console.log("Cant resolve amount in")
+      console.log("can't buy")
     }
+  } else {
+    alert("You can't buy on this network, go on Kovan")
   }
-
+}
 // const sendToken = async () => {
 //   // const contract = new web3.eth.Contract(Abi, addressContract)
 //     if(tokenList.symbol == "ETH") {
@@ -227,18 +256,6 @@ const handdleClickBuy = () => {
   //   } 
   // }
 
-// useEffect( async () => {
-
-//   function loadBlockchainData() {
-//     const web3 = window.web3;
-//     // Load account
-//     const accounts = await web3.eth.getAccounts();
-//     setAccount(accounts[0])
-//     const networkId = await web3.eth.net.getId();
-//   }
-
-//   loadBlockchainData();
-// }, [])
 /**
  * Rend JSX
  */
@@ -272,7 +289,7 @@ const handdleClickBuy = () => {
                       
                       <p class="margin-bottom-p"><span class="italic">maximum payed :</span>&nbsp;&nbsp;<span class="bold sizeERC20">{amountInMax} {tokenChose.symbol}</span></p>
                       
-                      <h2>Max Price : calulatedPrice</h2>
+                      <h2>Max Price : {initialPrice}</h2>
                       
                       <button onClick={() => handdleClickBuy()} class="btn-buy">BUY</button>
                   
