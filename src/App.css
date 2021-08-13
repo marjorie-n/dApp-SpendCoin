@@ -133,7 +133,6 @@ select option {
     font-size: 14px!important;
 }
 
-<<<<<<< HEAD
 #swap-box .btn.swap {
   position: absolute;
   width: 90%;
@@ -157,10 +156,6 @@ footer {
   color: black;
   padding-bottom: 15px;
   margin-left: 24%!important;
-=======
-.margin-bottom-p {
-    margin-bottom: 45px;
->>>>>>> d7de301649ba052d16e302ea7cc26028bd1f6456
 }
 
 .btn-buy {
