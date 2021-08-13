@@ -1,10 +1,6 @@
 /*import logo from "./assets/spendcoin.png";*/
- /*HEAD*/
-import React, { useState, useEffect, useCallback } from "react";
+import React, {useState, useEffect} from "react";
 import "bootstrap/dist/css/bootstrap.css";
-import React, {useState, useEffect, useCallback} from "react";
-// import "bootstrap/dist/css/bootstrap.css";
-// d7de301649ba052d16e302ea7cc26028bd1f6456
 import Web3 from "web3";
 import "./App.css";
 import "./reset.css";
@@ -101,8 +97,10 @@ function App() {
   // useEffect( async () => {
 //Json import
 import chainsList from "./chains/chains.json"
-import tokenList from "./tokensList/tokens.json"
+import tokenList from "./chains/tokenList.json"
 // import Abi...
+import erc20ABI from "./contracts/erc20ABI.json"
+import swapContractABi from "./contracts/swapContractABI.json"
 
 //Components import
 import Header from "./components/Header";
@@ -111,22 +109,33 @@ import Footer from "./components/Footer";
 
 function App() {
 
-  //INIT
+  //INIT WEB3
   const [web3] = useState(new Web3(Web3.givenProvider || "ws://localhost:8545"));
   const [isConnectedWeb3, setIsConnectedWeb3] = useState(false);
+  
+  // ACCOUNT
+  const [accounts, setAccounts] = useState([])
+  const [balance, setBalance] = useState(0)
+
+  // NETWORK
   const [networkId, setNetworkId] = useState(null)
   const [network, setNetwork] = useState({})
-  const [isRinkeby, setIsRinkeby] = useState(false)
-  const [addressContract] = useState("0x46da4441623da04f50f12bb9bba487ffe48f2218")
+  const [isKovan, setIsKovan] = useState(false)
+
+  // CONTRACT
+  const [addressSwapContract] = useState("0xDfD93b6ABe3d759F2D046aE1F4Bf40C25aa36258")
   // const [tokenId, setTokenId] = useState("")
 
   //SET GENERAL
-  const [accounts, setAccounts] = useState([])
-  const [price, setPrice] = useState(2)
+  const [initialPrice, setInitialPrice] = useState(10)
 
-  //SEND ETH
-  // const [balance, setBalance] = useState(0)
-  // const [weiToSend, setWeiToSend] = useState(0)
+  // SWAP INFOS
+  const [addressWETH] = useState("0xd0A1E359811322d97991E03f863a0C30C2cF029C")
+  const [tokenChose, setTokenChose] = useState(tokenList[0])
+  const [tokenAddress, setTokenAddress] = useState(tokenList[0].address)
+  const [addressTokenOut] = useState("0x67BeF77Fef6D7bbF0fE14723E017c2fda1634Ef8") // WCS pour le contrat test v0.2
+  const [amountInMax, setAmountInMax]= useState(0)
+
 
   //SEND ERC20
   // const [balanceOf, setBalanceOf] = useState(0)
@@ -137,12 +146,10 @@ function App() {
   // const [tokenToSend, setTokenToSend] = useState(0)
   // const [symbol, setSymbol] = useState("")
   // const [amountUSDC, setAmountUSDC] = useState(2)
-   // const [addressUSDC] = useState("")
-  const [nameToken, setNameToken] = useState("")
+  // const [nameToken, setNameToken] = useState("")
   // const [addressER20, setAddressERC20] = useState("")
 
-  const [amountIn, setAmountIn]= useState(0)
-  const [priceCalculated, setPriceCalculated] = useState(0)
+  //const [priceCalculated, setPriceCalculated] = useState(0)
 
   const connectToWeb3 =
   async () => {
@@ -173,10 +180,13 @@ const verifyNetwork = async () => {
   }
     console.log(currentChainID);
 
-  if (currentChainID == 4) {
-    setIsRinkeby(true)
+  if (currentChainID === 42) {
+    setIsKovan(true)
+    getAmoutIn()
   } else {
-    setIsRinkeby(false)
+    console.log("alert")
+    alert("You must be on Kovan Network")
+    setIsKovan(false)
   }
 }
 
@@ -207,8 +217,6 @@ useEffect(async () => {
   window.ethereum.on('chainChanged', displayChainChanged)
   window.ethereum.on('accountsChanged', displayAccChanged)
 
-  verifyNetwork()
-
   return () => {
     if (window.ethereum.removeListener) {
       window.ethereum.removeListener('connect', displayAccConnect)
@@ -218,11 +226,135 @@ useEffect(async () => {
   }
 }, [])
 
-  const handleAmoutIn = async() => {
-    const contract = new web3.eth.Contract(Abi, addressContract)
-    return setAmountIn(await addressContract.methods.getAmountInMax(target.value, addressUSDC, price))
+// Récupérer la balance & le amountInMax lorque le compte ou le réseau change
+useEffect (()=> {
+  const getAccounts = async () => setAccounts(await web3.eth.getAccounts())
+  const getBalance = async () => setBalance(web3.utils.fromWei(await web3.eth.getBalance(accounts[0])))
+  if (accounts.length === 0) getAccounts()
+  if (accounts.length > 0) getBalance()
+  if (accounts.length === 0)
+    setIsConnectedWeb3(false)
+  else
+    setIsConnectedWeb3(true)
+}, [isConnectedWeb3, accounts, network, web3.eth, web3.utils])
+
+// Changer la balance lorque le token choisi change
+useEffect( async () => {
+  console.log('change balance')
+  console.log(tokenAddress)
+
+  // Change token
+  for(let i=0; i<tokenList.length; i++){
+    if(tokenAddress === tokenList[i].address){
+      console.log(tokenList[i].name)
+      setTokenChose(tokenList[i])
+    }
   }
 
+  // Change Balance
+  if(tokenAddress){
+    try{
+      const tokenContract = new web3.eth.Contract(erc20ABI, tokenAddress)
+      const balance = await tokenContract.methods.balanceOf(accounts[0]).call()
+      console.log(balance)
+      setBalance(web3.utils.fromWei(balance))
+    
+    } catch(error) {
+      console.log(error)
+      console.log("cant resolve token balance")
+    }
+  } else {
+    if (accounts.length > 0) {
+      console.log('balance eth')
+      console.log(accounts[0])
+      setBalance(web3.utils.fromWei(await web3.eth.getBalance(accounts[0])))
+    }
+  }
+
+  // Change AmountInMax
+  getAmoutIn()
+
+}, [tokenAddress])
+
+
+
+// Liste des token dans le select
+const tokensList = tokenList.map((token, index) => {
+  return(<option key={index} value={token.address}>{token.name}</option>)
+})
+
+// Avoir le montant In en fonction du token 
+const getAmoutIn = async() => {
+  console.log(tokenChose.address)
+  console.log(addressTokenOut)
+  console.log(initialPrice)
+  let addressTokenIn;
+
+  // Check if ETH or Token
+  if(tokenAddress)
+    addressTokenIn = tokenAddress
+  else
+    addressTokenIn = addressWETH
+  
+  try{
+    const swapContract = new web3.eth.Contract(swapContractABi, addressSwapContract)
+    const amountIn = await swapContract.methods.getAmountInMax(addressTokenIn, addressTokenOut, web3.utils.toWei(initialPrice.toString())).call()
+    console.log(web3.utils.fromWei(amountIn))
+    setAmountInMax(web3.utils.fromWei(amountIn))
+  } catch(error) {
+    console.log(error)
+    console.log("Cant resolve amount in")
+  }
+}
+
+// Clic sur le bouton buy pour swap les token
+const handdleClickBuy = async () => {
+  // Must be on Kovan
+  if(isKovan) {
+    getAmoutIn()
+    const amountOut = web3.utils.toWei(initialPrice.toString())
+    try{
+      const swapContract = new web3.eth.Contract(swapContractABi, addressSwapContract)
+      // Check tokenIn
+      if(tokenChose.name === "Ether") {
+        console.log("swap ETH")
+        // Récupère le amountInMax à mettre en value
+        const amountIn = await swapContract.methods.getAmountInMax(addressWETH, addressTokenOut, web3.utils.toWei(initialPrice.toString())).call()
+       
+        swapContract.methods.swapETH(amountOut).send({from: accounts[0], value: amountIn})
+        .on('sending', () => {
+          console.log("Transaction send ! Please confirm the transaction on metamask")
+        })
+        .once('transactionHash', (hash) => {
+          console.log(hash)
+        })
+        .on('confirmation', () => {
+          console.log('Transaction has been confirmed')
+        })
+
+      } else {
+        console.log("swap token")
+
+        swapContract.methods.swapToken(tokenAddress, amountOut).send({from: accounts[0]})
+        .on('sending', () => {
+          console.log("Transaction send ! Please confirm the transaction on metamask")
+        })
+        .once('transactionHash', (hash) => {
+          console.log(hash)
+        })
+        .on('confirmation', () => {
+          console.log('Transaction has been confirmed')
+        })
+
+      }
+    } catch(error) {
+      console.log(error)
+      console.log("can't buy")
+    }
+  } else {
+    alert("You can't buy on this network, go on Kovan")
+  }
+}
 // const sendToken = async () => {
 //   // const contract = new web3.eth.Contract(Abi, addressContract)
 //     if(tokenList.symbol == "ETH") {
@@ -271,19 +403,6 @@ useEffect(async () => {
   //   } 
   // }
 
-// useEffect( async () => {
-
-//   function loadBlockchainData() {
-//     const web3 = window.web3;
-//     // Load account
-//     const accounts = await web3.eth.getAccounts();
-//     setAccount(accounts[0])
-//     const networkId = await web3.eth.net.getId();
-//   }
-//d7de301649ba052d16e302ea7cc26028bd1f6456
-
-//   loadBlockchainData();
-// }, [])
 /**
  * Rend JSX
  */
@@ -369,41 +488,36 @@ useEffect(async () => {
           
           <div id="mainContent">
               <div id="swap-interface">
-                  <form id="swap-box">
+                  <form onSubmit={(event) => {event.preventDefault();}} id="swap-box">
                       
                       <div class="first-price">
-                          <h2>Price :&nbsp;{price}$</h2>
+                          <h2>Price :&nbsp;{initialPrice}$</h2>
                       </div>
                       
-                      <h3 class="pay-with">Pay with :</h3>
+                      <h3 class="pay-with">Pay with : {balance}</h3>
                       
                       <div class="group-top">
                           
-                          <select name="listErc20">
-                            {for(let i= 0 ; i < tokenList.length; i++){
-                              <option value="{tokenList[i].symbol}">{tokenList[i].symbol}</option>
-                            }}
-                          
+                          <select  name="listErc20" onChange={e=>{setTokenAddress(e.target.value)}}>
+                            {tokensList}                          
                           </select>
                           <span class="group-text"> <img src="{tokenList.logoURI}" alt=""/> </span>
                       
                       </div>
                       
 
-                      <p><span class="italic">Slipage tolerance :</span>&nbsp;&nbsp;3% </p>
+                      <p><span class="italic">Slipage tolerance :</span>&nbsp;&nbsp; </p>
                       
-                      <p class="margin-bottom-p"><span class="italic">maximum payed :</span>&nbsp;&nbsp;<span class="bold sizeERC20">{handleAmountIn()}{symbol}</span></p>
+                      <p class="margin-bottom-p"><span class="italic">maximum payed :</span>&nbsp;&nbsp;<span class="bold sizeERC20">{amountInMax} {tokenChose.symbol}</span></p>
                       
-                      <h2>Max Price : {calulatedPrice}</h2>
+                      <h2>Max Price : {initialPrice} $</h2>
                       
-                      <button class="btn-buy">BUY</button>
+                      <button onClick={() => handdleClickBuy()} class="btn-buy">BUY</button>
                   
 
                   </form>
               </div>
           </div>
-//</div>d7de301649ba052d16e302ea7cc26028bd1f6456
-
       <Footer />
     </div>
   );
