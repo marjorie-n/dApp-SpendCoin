@@ -3,7 +3,7 @@ import React, {useState, useEffect} from "react";
 import "bootstrap/dist/css/bootstrap.css";
 import Web3 from "web3";
 import "./App.css";
-import "./reset.css";
+//import "./reset.css";
 
 //Json import
 import chainsList from "./chains/chains.json"
