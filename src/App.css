@@ -68,12 +68,8 @@ h3 {
     font-size: 1.25rem !important;
 }
 
-a {
-    color: rgba(255, 122, 122, 1);
-}
-
 a:hover {
-    color: rgba(255, 220, 152, 1);
+    color: #f14c6d;
 }
 
 /*HEADER*/
@@ -107,6 +103,12 @@ a:hover {
     font-size: 1.2rem;
     margin-top: 10px;
 }
+.btn-lg, .btn-group-lg > .btn {
+    padding: 0.5rem 1rem;
+    font-size: 1.25rem;
+    border-radius: 0.3rem;
+    box-shadow: 1px 1px 1px black;
+}
 
 /**/
 .mainContent {
@@ -115,7 +117,7 @@ a:hover {
 }
 
 #swap-interface {
-    margin-bottom: 100px;
+    bottom: 100px;
     border-radius: 100px;
     height: 410px;
     width: 500px;
@@ -221,14 +223,14 @@ footer {
     color: #34313f;
     text-align: center;
     font-size: 1.1rem;
-    padding-top: 20px;
+    /*padding-top: 20px;*/
     padding-bottom: 20px;
   }
 
 footer a {
-    color:blue;
+    color:#627eea;
   }
 
-footer a {
+/*footer a {
     color:rgba(255, 122, 122, 1);
-  }
+  }*/
