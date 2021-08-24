@@ -36,7 +36,7 @@ function App() {
   // const [tokenId, setTokenId] = useState("")
 
   //SET GENERAL
-  const [initialPrice, setInitialPrice] = useState(10)
+  const [initialPrice, setInitialPrice] = useState(5)
 
   // SWAP INFOS
   const [addressWETH] = useState("0xd0A1E359811322d97991E03f863a0C30C2cF029C")
@@ -44,6 +44,10 @@ function App() {
   const [tokenAddress, setTokenAddress] = useState(tokenList[0].address)
   const [addressTokenOut] = useState("0x67BeF77Fef6D7bbF0fE14723E017c2fda1634Ef8") // WCS pour le contrat test v0.2
   const [amountInMax, setAmountInMax]= useState(0)
+
+  const [allow, setAllow] = useState(0)
+  const [txHash, setTxHash]= useState("")
+  const [isMined, setIsMined]= useState("")
 
 
   //SEND ERC20
@@ -99,6 +103,18 @@ const verifyNetwork = async () => {
   }
 }
 
+const allowance = async () => {
+  const tokenContract = new web3.eth.Contract(erc20ABI, tokenAddress)
+  if(tokenAddress) {
+  setAllow(await tokenContract.methods.allowance(accounts[0],"0xDfD93b6ABe3d759F2D046aE1F4Bf40C25aa36258").call())
+}
+}
+
+const approve = async () => {
+  const tokenContract = new web3.eth.Contract(erc20ABI, tokenAddress)
+  await tokenContract.methods.approve("0xDfD93b6ABe3d759F2D046aE1F4Bf40C25aa36258", "115792089237316195423570985008687907853269984665640564039457").send({from: accounts[0]})
+}
+
 /*
   Connection au chargement de la page
 */
@@ -126,6 +142,9 @@ useEffect(async () => {
   window.ethereum.on('chainChanged', displayChainChanged)
   window.ethereum.on('accountsChanged', displayAccChanged)
 
+  allowance()
+  verifyNetwork()
+
   return () => {
     if (window.ethereum.removeListener) {
       window.ethereum.removeListener('connect', displayAccConnect)
@@ -138,7 +157,13 @@ useEffect(async () => {
 // Récupérer la balance & le amountInMax lorque le compte ou le réseau change
 useEffect (()=> {
   const getAccounts = async () => setAccounts(await web3.eth.getAccounts())
-  const getBalance = async () => setBalance(web3.utils.fromWei(await web3.eth.getBalance(accounts[0])))
+  const getBalance = async () => {
+    const balanceEth = web3.utils.fromWei(await web3.eth.getBalance(accounts[0]))
+    const balanceRound = Math.floor((balanceEth * 100000))/100000
+    setBalance(balanceRound)
+  }
+  console.log('balance first')
+
   if (accounts.length === 0) getAccounts()
   if (accounts.length > 0) getBalance()
   if (accounts.length === 0)
@@ -164,11 +189,15 @@ useEffect( async () => {
   if(tokenAddress){
     try{
       const tokenContract = new web3.eth.Contract(erc20ABI, tokenAddress)
-      const balance = await tokenContract.methods.balanceOf(accounts[0]).call()
-      console.log(balance)
-      setBalance(web3.utils.fromWei(balance))
-    
-    } catch(error) {
+      const balanceErc20 = await tokenContract.methods.balanceOf(accounts[0]).call()
+      const erc20Round = Math.floor((web3.utils.fromWei(balanceErc20.toString()) * 100000))/100000
+      setBalance(erc20Round)
+     
+      // const balanceEth = web3.utils.fromWei(await web3.eth.getBalance(accounts[0]))
+      // const balanceRound = Math.floor((balanceEth * 100000))/100000
+      // setBalance(balanceRound)
+    }
+    catch(error) {
       console.log(error)
       console.log("cant resolve token balance")
     }
@@ -176,15 +205,18 @@ useEffect( async () => {
     if (accounts.length > 0) {
       console.log('balance eth')
       console.log(accounts[0])
-      setBalance(web3.utils.fromWei(await web3.eth.getBalance(accounts[0])))
+      const balanc = web3.utils.fromWei(await web3.eth.getBalance(accounts[0]))
+      const balanceR = Math.floor((balanc * 100000))/100000
+      setBalance(balanceR.toString())
     }
   }
 
   // Change AmountInMax
+  
+  allowance()
   getAmoutIn()
 
 }, [tokenAddress])
-
 
 
 // Liste des token dans le select
@@ -208,8 +240,12 @@ const getAmoutIn = async() => {
   try{
     const swapContract = new web3.eth.Contract(swapContractABi, addressSwapContract)
     const amountIn = await swapContract.methods.getAmountInMax(addressTokenIn, addressTokenOut, web3.utils.toWei(initialPrice.toString())).call()
+ 
+    const balanceAmountIn = Math.floor((web3.utils.fromWei(amountIn.toString()) * 100000))/100000
+    setAmountInMax(balanceAmountIn.toString())
+
     console.log(web3.utils.fromWei(amountIn))
-    setAmountInMax(web3.utils.fromWei(amountIn))
+
   } catch(error) {
     console.log(error)
     console.log("Cant resolve amount in")
@@ -231,28 +267,28 @@ const handdleClickBuy = async () => {
         const amountIn = await swapContract.methods.getAmountInMax(addressWETH, addressTokenOut, web3.utils.toWei(initialPrice.toString())).call()
        
         swapContract.methods.swapETH(amountOut).send({from: accounts[0], value: amountIn})
-        .on('sending', () => {
-          console.log("Transaction send ! Please confirm the transaction on metamask")
-        })
+          // .on('sending', () => {
+        //   setOnSending("Transaction send ! Please confirm the transaction on metamask")
+        // })
         .once('transactionHash', (hash) => {
-          console.log(hash)
+          setTxHash(hash)
         })
         .on('confirmation', () => {
-          console.log('Transaction has been confirmed')
+          setIsMined('Transaction has been confirmed')
         })
 
       } else {
         console.log("swap token")
 
         swapContract.methods.swapToken(tokenAddress, amountOut).send({from: accounts[0]})
-        .on('sending', () => {
-          console.log("Transaction send ! Please confirm the transaction on metamask")
-        })
+         // .on('sending', () => {
+        //   setOnSending("Transaction send ! Please confirm the transaction on metamask")
+        // })
         .once('transactionHash', (hash) => {
-          console.log(hash)
+          setTxHash(hash)
         })
         .on('confirmation', () => {
-          console.log('Transaction has been confirmed')
+          setIsMined('Transaction has been confirmed')
         })
 
       }
@@ -342,7 +378,7 @@ const handdleClickBuy = async () => {
                           <select  name="listErc20" onChange={e=>{setTokenAddress(e.target.value)}}>
                             {tokensList}                          
                           </select>
-                          <span class="group-text"> <img src="{tokenList.logoURI}" alt=""/> </span>
+                          <span class="group-text"> <img src="./assets/eth.png" alt=""/> </span>
                       
                       </div>
                       
@@ -351,10 +387,28 @@ const handdleClickBuy = async () => {
                       
                       <p class="margin-bottom-p"><span class="italic">maximum payed :</span>&nbsp;&nbsp;<span class="bold sizeERC20">{amountInMax} {tokenChose.symbol}</span></p>
                       
-                      <h2>Max Price : {initialPrice} $</h2>
+                      <h2>Max Price : {initialPrice}$</h2>
+                      {tokenAddress == "" ? null : allow == "115792089237316195423570985008687907853269984665640564039457" ? null : <button onClick={() => approve()} class="btn-approve">You need to Approve</button> }
                       
                       <button onClick={() => handdleClickBuy()} class="btn-buy">BUY</button>
-                  
+                      {
+                        txHash && !isMined ?
+                          <div className="center">
+                          <a href={`https://kovan.etherscan.io/tx/${txHash}`} target="_blank">
+                           View your transaction
+                          </a>
+                          </div>
+                          : null
+                    }
+                    {
+                      isMined ?
+                      <div className="center">
+                      <a href={`https://kovan.etherscan.io/tx/${txHash}`} target="_blank">
+                      Transaction done
+                      </a> 
+                      </div>
+                      : null
+                    }
 
                   </form>
               </div>

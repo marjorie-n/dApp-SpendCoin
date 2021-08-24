@@ -2,32 +2,41 @@ import React from 'react'
 
 export default function Header(props) {
   return (
-    <header>
-      <div className="container">
-        <img
-          src="./assets/spendcoin.png"
-          className="rounded float-start"
-          alt="logo spendcoin"
-        />
+    <header className="container-header">
+
+      <div>
+          <img className="img-logo"
+              src="./assets/logo-spendcoin.png"
+
+              alt="logo spendcoin"
+            />
       </div>
-      {props.network.name}
-      <div id="user-profile">
-        <button
-          type="button"
-          className="btn btn-light btn-lg login"
-          style={{ backgroundColor: "#8248e4" }}
-        >
-          Polygon
-        </button>
-        &nbsp;
-        <button
-          onClick={props.handleClick}
-          type="button"
-          className="btn btn-warning btn-lg login"
-        >
-          Connect Wallet
-        </button>
+        <div>
+          <div id="user-profile"> 
+            <button
+              type="button"
+              className="btn btn-lg login"
+              style={{ backgroundColor: "rgba(255, 220, 152, 1)" }}
+            >
+              Polygon
+            </button>
+            &nbsp;
+            <button
+              onClick={props.handleClick}
+              type="button"
+              className="btn btn-warning btn-lg login"
+            >
+              Connect Wallet
+            </button>
+          </div> 
+
+        <div class="network-name">
+          {props.network.name}
+       </div>
+      
       </div>
+     
+
     </header>
   );
 }

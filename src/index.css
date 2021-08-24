@@ -4,11 +4,11 @@ body {
   color: #fff;
 }
 
-header {
+/* header {
   height: 80px;
   width: 100%;
   position: relative;
-}
+} */
 
 header h1 {
   position: absolute;
@@ -18,13 +18,13 @@ header h1 {
   font-family: 'Arvo', serif;
 }
 
-#user-profile {
+/* #user-profile {
   position: absolute;
   top: 50%;
   right: 0px;
   transform: translate(0, -50%);
   margin-right: 30px;
-}
+} */
 
 #user-profile .logout {
   display: none;
@@ -75,7 +75,7 @@ header h1 {
 img {
   width: 30px;
   height: 30px;
-  margin-left: -5px;
+  /* margin-left: -5px; */
 }
 
 .input-group .btn {
@@ -140,7 +140,7 @@ img {
   border-radius: 15px;
 }
 
-footer {
+/* footer {
   clear: both;
   padding: 0;
   vertical-align: middle;
@@ -151,7 +151,7 @@ footer {
   width: 100%;
   color: black;
   padding-bottom: 15px;
-}
+} */
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

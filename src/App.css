@@ -1,7 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap');
 
 * {
     font-family: 'Montserrat', sans-serif;
+    transition: all .1s ease-out;
+    box-sizing: border-box;
 }
 
 /* */
@@ -41,6 +43,10 @@ header h1 {
   background: radial-gradient(circle, rgba(255, 220, 152, 1) 0%, rgba(255, 122, 122, 1) 95%);
  }
 /* */
+.center {
+    padding-left: 15%;
+}
+
 .italic {
     font-style: italic;
 }
@@ -62,17 +68,56 @@ h3 {
     font-size: 1.25rem !important;
 }
 
-.mainContent {
-   
+a {
+    color: rgba(255, 122, 122, 1);
+}
+
+a:hover {
+    color: rgba(255, 220, 152, 1);
+}
+
+/*HEADER*/
+
+.container-header{
+    padding-top: 20px;
     display: flex;
     align-items: center;
-    
+    justify-content: space-between;
+}
+
+/* .img-header{
+    width: 95px;
+    height: 90px;
+} */
+
+.img-logo {
+    width: 95px;
+    height: 90px;
+}
+
+#user-profile{
+   display: flex;
+   justify-content: flex-end;
+}
+
+.network-name {
+    display: flex;
+    justify-content: flex-end;
+    color: #34313f;
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+
+/**/
+.mainContent {
+    display: flex;
+    align-items: center;
 }
 
 #swap-interface {
-    margin: 75px auto;
+    margin-bottom: 100px;
     border-radius: 100px;
-    height: 400px;
+    height: 410px;
     width: 500px;
     background-color: #191b1f;
     position: relative;
@@ -146,26 +191,44 @@ select option {
   border-radius: 15px;
 }
 
-footer {
-  clear: both;
-  padding: 0;
-  line-height: normal;
-  position: fixed;
-  bottom: 8px;
-  width: 100%;
-  color: black;
-  padding-bottom: 15px;
-  margin-left: 24%!important;
-}
-
 .btn-buy {
     border-radius: 25px;
     padding: 7px;
     width: 300px;
+    margin-top: 5px;
 }
 
-.btn-buy::hover{
-    background-color: lightcoral;
+.btn-approve {
+    width: 300px;
+    border-radius: 25px;
+    padding: 7px;
+    /* border: 5px solid lightcoral; */
+    background:rgba(255, 220, 152, 1);
+}
+
+.btn-approve:hover{
+    background: rgba(255, 122, 122, 1);
+}
+
+.btn-buy:hover {
+    background-color:rgba(255, 122, 122, 1);
     color: #fff;
 }
 
+/* FOOTER */
+
+footer {
+    color: #34313f;
+    text-align: center;
+    font-size: 1.1rem;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+footer a {
+    color:blue;
+  }
+
+footer a {
+    color:rgba(255, 122, 122, 1);
+  }
