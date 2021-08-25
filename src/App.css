@@ -104,9 +104,6 @@ a:hover {
     margin-top: 10px;
 }
 .btn-lg, .btn-group-lg > .btn {
-    padding: 0.5rem 1rem;
-    font-size: 1.25rem;
-    border-radius: 0.3rem;
     box-shadow: 1px 1px 1px black;
 }
 
@@ -230,7 +227,47 @@ footer {
 footer a {
     color:#627eea;
   }
+/*Medias Queries Responsive */
+@media (min-width: 466px) and (max-width: 550px) {
+    .btn-lg, .btn-group-lg > .btn {
+        font-size: 1rem;
+    }
+    #swap-interface{
+        width: auto;
+    }
+    footer{
+        font-size: 0.7rem;
+    }
+    .network-name {
+        font-size: 1rem;
+    }
+ }
+ /* Iphone 6/7/8 */
+ @media (min-width: 375px) and (max-width: 667px) {
+    .btn-lg, .btn-group-lg > .btn {
+        font-size: 0.8rem;
+    }
+    .network-name {
+        font-size: 1rem;
+    }
+    #swap-interface{
+        width: auto;
+    }
+    .group-top {
+        display: contents;
+    }
+    .group-text {
+        display: contents;
+    }
+    .btn-buy {
+        width: 200px;
+    }
+    .img-logo {
+        width: 60px;
+        height: 60px;
+    }
+    footer {
+        font-size: 0.6rem;
+    }
 
-/*footer a {
-    color:rgba(255, 122, 122, 1);
-  }*/
+ }
