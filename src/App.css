@@ -116,7 +116,7 @@ a:hover {
 #swap-interface {
     bottom: 100px;
     border-radius: 100px;
-    height: 410px;
+    height: 448px;
     width: 500px;
     background-color: #191b1f;
     position: relative;
@@ -133,6 +133,10 @@ form {
 }
 
 .first-price {
+    display: flex;
+}
+
+.spcb {
     display: flex;
 }
 
@@ -194,7 +198,7 @@ select option {
     border-radius: 25px;
     padding: 7px;
     width: 300px;
-    margin-top: 5px;
+    margin-top: 10px;
 }
 
 .btn-approve {
@@ -212,6 +216,14 @@ select option {
 .btn-buy:hover {
     background-color:rgba(255, 122, 122, 1);
     color: #fff;
+}
+
+.tx-link {
+    color:rgba(255, 220, 152, 1);
+}
+
+.tx-link:hover {
+    color: rgba(255, 122, 122, 1);
 }
 
 /* FOOTER */
