@@ -12,7 +12,7 @@ export default function Footer() {
             rel="noreferrer"
             target="_blank"
           >&nbsp;
-            Digital Pilote
+            Digital Copilote
           </a>
         </strong>
       </a>
