@@ -1,14 +1,12 @@
-import React from 'react'
+import React from "react";
 
 export default function Footer() {
-
-    return(
-        <footer>
-          SpendCoinDApp make with ❤️ by &nbsp;
-          <a href="" rel="noreferrer" target="_blank">
-            Wild Team for Digital Pilote
-          </a>
-          &nbsp; © 2021
-        </footer>
-    )
+  return (
+    <footer>
+      © 2021 SpendCoinDApp make with ❤️ by &nbsp;
+      <a rel="noreferrer" target="_blank">
+        <strong>Wild Team for Digital Pilote</strong>
+      </a>
+    </footer>
+  );
 }

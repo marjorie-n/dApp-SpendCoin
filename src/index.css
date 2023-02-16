@@ -15,7 +15,7 @@ header h1 {
   top: 50%;
   transform: translate(0, -50%);
   margin-left: 30px;
-  font-family: 'Arvo', serif;
+  font-family: "Arvo", serif;
 }
 
 /* #user-profile {
@@ -53,7 +53,7 @@ header h1 {
 
 .form-control {
   background-color: #212429;
-  border-color: #2C2F36;
+  border-color: #2c2f36;
   border-width: 2px;
   height: 70px;
   border-radius: 15px;
@@ -61,14 +61,14 @@ header h1 {
 }
 
 .input-group-text {
-  background-color: #191B1F;
-  border-color: #2C2F36;
+  background-color: #191b1f;
+  border-color: #2c2f36;
   color: #fff;
   width: 27%;
   font-size: large;
 }
 
-#eth-addon img{
+#eth-addon img {
   margin-left: 10px;
 }
 
@@ -80,7 +80,7 @@ img {
 
 .input-group .btn {
   width: 27%;
-  border-color: #2C2F36;
+  border-color: #2c2f36;
 }
 
 .input-group #output:hover {
@@ -97,11 +97,11 @@ img {
   justify-content: center;
 }
 
-#arrow-box h2{
-  margin: 2px 0px; 
+#arrow-box h2 {
+  margin: 2px 0px;
 }
 
-#arrow-box h2:hover{
+#arrow-box h2:hover {
   cursor: pointer;
 }
 
@@ -111,7 +111,7 @@ img {
   margin-top: 20px;
 }
 
-#rate-box .rate{
+#rate-box .rate {
   color: #788089;
 }
 
@@ -126,13 +126,12 @@ img {
   display: none;
 }
 
-
 #swap-box .btn.swap {
   position: absolute;
   width: 90%;
   height: 50px;
-  background-color: #172A42;
-  color: #6DA8FF;
+  background-color: #172a42;
+  color: #6da8ff;
   margin: 0px auto;
   bottom: -75px;
   left: 50%;
@@ -158,6 +157,3 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
-
-
