@@ -69,20 +69,6 @@ function App() {
   const [txHash, setTxHash] = useState("");
   const [isMined, setIsMined] = useState("");
 
-  //SEND ERC20
-  // const [balanceOf, setBalanceOf] = useState(0)
-  // const [decimals, setDecimals] = useState(0)
-  // const [isMinedToken, setIsMinedToken] = useState(false)
-  // const [isLoadingToken, setIsLoadingToken] = useState(false)
-  // const [addressToSendToken, setAddressToSendToken] = useState("")
-  // const [tokenToSend, setTokenToSend] = useState(0)
-  // const [symbol, setSymbol] = useState("")
-  // const [amountUSDC, setAmountUSDC] = useState(2)
-  // const [nameToken, setNameToken] = useState("")
-  // const [addressER20, setAddressERC20] = useState("")
-
-  //const [priceCalculated, setPriceCalculated] = useState(0)
-
   const connectToWeb3 = async () => {
     let currentChainID = await web3.eth.net.getId(); //diff avec getchainid() ?
     setNetworkId(currentChainID);
@@ -230,10 +216,6 @@ function App() {
           Math.floor(web3.utils.fromWei(balanceErc20.toString()) * 100000) /
           100000;
         setBalance(erc20Round);
-
-        // const balanceEth = web3.utils.fromWei(await web3.eth.getBalance(accounts[0]))
-        // const balanceRound = Math.floor((balanceEth * 100000))/100000
-        // setBalance(balanceRound)
       } catch (error) {
         console.log(error);
         console.log("cant resolve token balance");
@@ -359,10 +341,6 @@ function App() {
           gatewayContract.methods
             .buyWithETH(amountOut, amountSPCB)
             .send({ from: accounts[0], value: amountIn })
-            //gatewayContract.methods.buyWithETH(amountOut, 0).send({from: accounts[0], value: amountIn})
-            // .on('sending', () => {
-            //   setOnSending("Transaction send ! Please confirm the transaction on metamask")
-            // })
             .once("transactionHash", (hash) => {
               setTxHash(hash);
             })
@@ -397,61 +375,6 @@ function App() {
       alert("You can't buy on this network, go on Kovan");
     }
   };
-  // const handdleClickBuy = async () => {
-  //   // Must be on Kovan
-  //   if(isGoerli) {
-  //     getAmoutIn()
-  //     const amountOut = web3.utils.toWei(initialPrice.toString())
-  //     console.log("token address : " + tokenAddress)
-  //     try{
-  //       const gatewayContract = new web3.eth.Contract(gatewayContractABI, addressGatewayContract);
-  //       // Check tokenIn
-  //         console.log("swap")
-  //         // Récupère le amountInMax à mettre en value
-
-  //         // Swap
-  // 			if (tokenAddress === "") {
-  //         const address0 = "0x0000000000000000000000000000000000000000"
-  //         console.log("eth")
-  //         console.log(accounts[0])
-  //         const amountIn = await gatewayContract.methods.getAmountInMax(addressWETH, addressTokenOut, web3.utils.toWei(initialPrice.toString())).call()
-
-  // 				gatewayContract.methods.buy(address0, amountOut, spcbAmount).send({from: accounts[0], value: amountIn})
-  //         //gatewayContract.methods.buyWithETH(amountOut, 0).send({from: accounts[0], value: amountIn})
-  //           // .on('sending', () => {
-  //         //   setOnSending("Transaction send ! Please confirm the transaction on metamask")
-  //         // })
-  //         .once('transactionHash', (hash) => {
-  //           setTxHash(hash)
-  //         })
-  //         .on('confirmation', () => {
-  //           setIsMined('Transaction has been confirmed')
-  //         })
-  // 			}
-  // 			else {
-  //         console.log("token")
-  //         console.log(accounts[0])
-
-  // 				gatewayContract.methods.buy(tokenAddress, amountOut, spcbAmount).send({from: accounts[0]})
-  //         //gatewayContract.methods.buyWithETH(amountOut, 0).send({from: accounts[0], value: amountIn})
-  //           // .on('sending', () => {
-  //         //   setOnSending("Transaction send ! Please confirm the transaction on metamask")
-  //         // })
-  //         .once('transactionHash', (hash) => {
-  //           setTxHash(hash)
-  //         })
-  //         .on('confirmation', () => {
-  //           setIsMined('Transaction has been confirmed')
-  //         })
-  // 			}
-  //     } catch(error) {
-  //       console.log(error)
-  //       console.log("can't buy")
-  //     }
-  //   } else {
-  //     alert("You can't buy on this network, go on Kovan")
-  //   }
-  // }
 
   // Toggle Use Reduc
   const toggleChecked = () => {
@@ -475,65 +398,6 @@ function App() {
   useEffect(() => {
     getAmoutIn();
   }, [maxPrice]);
-
-  // const sendToken = async () => {
-  //   // const contract = new web3.eth.Contract(Abi, addressContract)
-  //     if(tokenList.symbol == "ETH") {
-  //
-  //         try {
-  //                 await contract.methods.swapETH(price)
-  //                 .on('receipt', () => {
-  //
-  //                 })
-  //             }
-  //             catch(error){
-  /* if (await contract.methods.getPair()) {
-                const reserves= await contract.methods.getReserves()
-                  if (reserves < 1) {
-                    alert("pas assez de liquidité")
-                  }
-              }
-              else {
-                alert("Pair doesn't exist")
-              } */
-  //             setIsLoadingToken(null)
-  //             alert("Wrong Address")
-  //         }
-  // }
-  // else {
-  //   try {
-  //     await contract.methods.swapToken(addressERC20, price)
-  //     .on('receipt', () => {
-  //     setIsLoadingToken(false)
-  //     setIsMinedToken(true)
-  //     })
-  // }
-  // catch(error){
-  /* if (await contract.methods.getPair()) {
-                const reserves =await contract.methods.getReserves()
-                  if (reserves < 1) {
-                    alert("pas assez de liquidité")
-                  }
-              }
-              else {
-                alert("Pair doesn't exist")
-              } */
-  //       setIsLoadingToken(null)
-  //       alert("Wrong Address")
-  //   }
-  //   }
-  // }
-
-  /**
-   * Rend JSX
-   */
-
-  //HEAD
-  //   loadBlockchainData();
-  // }, [])
-  /**
-   * Rend JSX
-   */
 
   const ReducSwitch = withStyles({
     switchBase: {
@@ -599,8 +463,6 @@ function App() {
                 <img src="./assets/eth.png" alt="" />{" "}
               </span>
             </div>
-
-            {/* <p><span class="italic">Slipage tolerance :</span>&nbsp;&nbsp; </p> */}
 
             <p class="margin-bottom-p">
               <span class="italic">maximum payed :</span>&nbsp;&nbsp;
